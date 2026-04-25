@@ -2,7 +2,6 @@ package com.company.enroller.persistence;
 
 import java.util.Collection;
 
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +18,11 @@ public class MeetingService {
 
 	public Collection<Meeting> getAll() {
 		String hql = "FROM Meeting";
-		Query query = connector.getSession().createQuery(hql);
+		Query<Meeting> query = connector.getSession().createQuery(hql, Meeting.class);
 		return query.list();
 	}
 
+    public Meeting findById(Long id) {
+		return connector.getSession().get(Meeting.class, id);
+    }
 }

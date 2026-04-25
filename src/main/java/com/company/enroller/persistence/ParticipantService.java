@@ -32,4 +32,13 @@ public class ParticipantService {
 		connector.getSession().saveOrUpdate(participant);
 		transaction.commit();
     }
+
+    public void deleteById(String login) {
+		Transaction transaction = connector.getSession().beginTransaction();
+		Participant retrievedParticipant = findByLogin(login);
+		if (retrievedParticipant != null) {
+			connector.getSession().delete(retrievedParticipant);
+		}
+		transaction.commit();
+    }
 }

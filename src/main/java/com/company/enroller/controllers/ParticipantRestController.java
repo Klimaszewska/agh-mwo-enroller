@@ -42,4 +42,10 @@ public class ParticipantRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteParticipant(@PathVariable("id") String login) {
+        participantService.deleteById(login);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

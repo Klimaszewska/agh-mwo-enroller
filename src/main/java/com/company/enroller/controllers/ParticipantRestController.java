@@ -47,7 +47,6 @@ public class ParticipantRestController {
         Participant retrievedParticipant = participantService.findByLogin(participant.getLogin());
         if (retrievedParticipant != null) {
             retrievedParticipant.setPassword(participant.getPassword());
-            retrievedParticipant.setLogin(participant.getLogin());
             participantService.update(retrievedParticipant);
             return new ResponseEntity(HttpStatus.ACCEPTED);
         } else {

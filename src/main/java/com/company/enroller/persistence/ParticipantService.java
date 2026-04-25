@@ -29,7 +29,7 @@ public class ParticipantService {
 
     public void save(Participant participant) {
 		Transaction transaction = connector.getSession().beginTransaction();
-		connector.getSession().saveOrUpdate(participant);
+		connector.getSession().save(participant);
 		transaction.commit();
     }
 
@@ -39,6 +39,12 @@ public class ParticipantService {
 		if (retrievedParticipant != null) {
 			connector.getSession().delete(retrievedParticipant);
 		}
+		transaction.commit();
+    }
+
+    public void update(Participant participant) {
+		Transaction transaction = connector.getSession().beginTransaction();
+		connector.getSession().update(participant);
 		transaction.commit();
     }
 }

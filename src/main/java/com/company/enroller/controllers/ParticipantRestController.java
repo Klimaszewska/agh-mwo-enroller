@@ -29,7 +29,7 @@ public class ParticipantRestController {
         if (participant == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Participant>(participant, HttpStatus.OK);
+        return new ResponseEntity<>(participant, HttpStatus.OK);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -40,6 +40,19 @@ public class ParticipantRestController {
         }
         participantService.save(participant);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateParticipant(@RequestBody Participant participant) {
+        Participant retrievedParticipant = participantService.findByLogin(participant.getLogin());
+        if (retrievedParticipant != null) {
+            retrievedParticipant.setPassword(participant.getPassword());
+            retrievedParticipant.setLogin(participant.getLogin());
+            participantService.update(retrievedParticipant);
+            return new ResponseEntity(HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

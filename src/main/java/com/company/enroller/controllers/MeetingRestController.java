@@ -31,4 +31,40 @@ public class MeetingRestController {
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<?> createMeeting(@RequestBody Meeting meeting) {
+        Meeting retrievedMeeting = meetingService.findById(meeting.getId());
+        if (retrievedMeeting != null) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        meetingService.save(meeting);
+        return new ResponseEntity<>(meeting, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateMeeting(@RequestBody Meeting meeting) {
+        Meeting retrievedMeeting = meetingService.findById(meeting.getId());
+        if (retrievedMeeting != null) {
+            retrievedMeeting.setTitle(meeting.getTitle());
+            retrievedMeeting.setDescription(meeting.getDescription());
+            retrievedMeeting.setDate(meeting.getDate());
+            meetingService.update(retrievedMeeting);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteMeeting(@PathVariable Long id) {
+        Meeting meeting = meetingService.findById(id);
+        if (meeting == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        meetingService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+
 }

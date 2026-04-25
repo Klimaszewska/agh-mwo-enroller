@@ -27,7 +27,7 @@ public class ParticipantRestController {
     public ResponseEntity<?> getParticipant(@PathVariable("id") String login) {
         Participant participant = participantService.findByLogin(login);
         if (participant == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(participant, HttpStatus.OK);
     }
@@ -36,7 +36,7 @@ public class ParticipantRestController {
     public ResponseEntity<?> registerParticipant(@RequestBody Participant participant) {
         Participant retrievedParticipant = participantService.findByLogin(participant.getLogin());
         if (retrievedParticipant != null) {
-            return new ResponseEntity("Unable to create. A participant with login " + participant.getLogin() + " already exist.", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Unable to create. A participant with login " + participant.getLogin() + " already exist.", HttpStatus.CONFLICT);
         }
         participantService.save(participant);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -48,7 +48,7 @@ public class ParticipantRestController {
         if (retrievedParticipant != null) {
             retrievedParticipant.setPassword(participant.getPassword());
             participantService.update(retrievedParticipant);
-            return new ResponseEntity(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -56,6 +56,10 @@ public class ParticipantRestController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteParticipant(@PathVariable("id") String login) {
+        Participant participant = participantService.findByLogin(login);
+        if (participant == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         participantService.deleteById(login);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

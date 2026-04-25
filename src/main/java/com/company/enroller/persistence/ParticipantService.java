@@ -19,7 +19,7 @@ public class ParticipantService {
 
 	public Collection<Participant> getAll() {
 		String hql = "FROM Participant";
-		Query query = connector.getSession().createQuery(hql);
+		Query<Participant> query = connector.getSession().createQuery(hql,  Participant.class);
 		return query.list();
 	}
 
@@ -29,8 +29,13 @@ public class ParticipantService {
 
     public void save(Participant participant) {
 		Transaction transaction = connector.getSession().beginTransaction();
-		connector.getSession().save(participant);
-		transaction.commit();
+		try {
+			connector.getSession().save(participant);
+			transaction.commit();
+		} catch (RuntimeException e) {
+			transaction.rollback();
+			throw e;
+		}
     }
 
     public void deleteById(String login) {

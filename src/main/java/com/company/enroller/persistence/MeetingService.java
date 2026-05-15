@@ -6,6 +6,7 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Locale;
 
 @Component("meetingService")
 public class MeetingService {
@@ -16,9 +17,23 @@ public class MeetingService {
         connector = DatabaseConnector.getInstance();
     }
 
-    public Collection<Meeting> getAll() {
-        String hql = "FROM Meeting";
-        Query<Meeting> query = connector.getSession().createQuery(hql, Meeting.class);
+    public Collection<Meeting> getAll(String sortBy, String sortOrder, String key) {
+        StringBuilder hql = new StringBuilder("FROM Meeting m");
+
+        boolean hasKey = key != null && !key.trim().isEmpty();
+        if (hasKey) {
+            hql.append(" WHERE LOWER(m.title) LIKE :key");
+        }
+
+        if ("title".equalsIgnoreCase(sortBy)) {
+            String order = "DESC".equalsIgnoreCase(sortOrder) ? "DESC" : "ASC";
+            hql.append(" ORDER BY m.title ").append(order);
+        }
+
+        Query<Meeting> query = connector.getSession().createQuery(hql.toString(), Meeting.class);
+        if (hasKey) {
+            query.setParameter("key", "%" + key.toLowerCase(Locale.ROOT) + "%");
+        }
         return query.list();
     }
 

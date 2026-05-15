@@ -1,6 +1,8 @@
 package com.company.enroller.controllers;
 
+import com.company.enroller.dto.AddParticipantRequest;
 import com.company.enroller.model.Meeting;
+import com.company.enroller.model.Participant;
 import com.company.enroller.persistence.MeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,9 +69,32 @@ public class MeetingRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-/*    public ResponseEntity<?> addParticipantToMeeting(@PathVariable Long id, @PathVariable String login) {
+    @RequestMapping(value = "/{id}/participants", method = RequestMethod.POST)
+    public ResponseEntity<?> addParticipantToMeeting(@PathVariable Long id, @RequestBody AddParticipantRequest request) {
+        boolean participantAdded = meetingService.addParticipant(id, request.getLogin());
+        if (!participantAdded) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-    }*/
+    @RequestMapping(value = "/{id}/participants", method = RequestMethod.GET)
+    public ResponseEntity<?> getMeetingParticipants(@PathVariable Long id) {
+        Collection<Participant> participants = meetingService.getParticipants(id);
+        if (participants == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(participants, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/participants/{login}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removeParticipantFromMeeting(@PathVariable Long id, @PathVariable String login) {
+        boolean participantRemoved = meetingService.removeParticipant(id, login);
+        if (!participantRemoved) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 
 

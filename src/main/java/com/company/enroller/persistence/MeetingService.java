@@ -1,8 +1,10 @@
 package com.company.enroller.persistence;
 
 import com.company.enroller.model.Meeting;
+import com.company.enroller.model.Participant;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -10,6 +12,9 @@ import java.util.Locale;
 
 @Component("meetingService")
 public class MeetingService {
+
+    @Autowired
+    ParticipantService participantService;
 
     DatabaseConnector connector;
 
@@ -65,5 +70,49 @@ public class MeetingService {
         Transaction transaction = connector.getSession().beginTransaction();
         connector.getSession().update(meeting);
         transaction.commit();
+    }
+
+    public boolean addParticipant(Long meetingId, String login) {
+        Transaction transaction = connector.getSession().beginTransaction();
+        try {
+            Meeting retrievedMeeting = findById(meetingId);
+            Participant retrievedParticipant = participantService.findByLogin(login);
+            if (retrievedMeeting == null || retrievedParticipant == null) {
+                transaction.rollback();
+                return false;
+            }
+            retrievedMeeting.addParticipant(retrievedParticipant);
+            transaction.commit();
+            return true;
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
+
+    public Collection<Participant> getParticipants(Long meetingId) {
+        Meeting retrievedMeeting = findById(meetingId);
+        if (retrievedMeeting == null) {
+            return null;
+        }
+        return retrievedMeeting.getParticipants();
+    }
+
+    public boolean removeParticipant(Long meetingId, String login) {
+        Transaction transaction = connector.getSession().beginTransaction();
+        try {
+            Meeting retrievedMeeting = findById(meetingId);
+            Participant retrievedParticipant = participantService.findByLogin(login);
+            if (retrievedMeeting == null || retrievedParticipant == null) {
+                transaction.rollback();
+                return false;
+            }
+            retrievedMeeting.removeParticipant(retrievedParticipant);
+            transaction.commit();
+            return true;
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
     }
 }

@@ -65,6 +65,10 @@ public class MeetingRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+/*    public ResponseEntity<?> addParticipantToMeeting(@PathVariable Long id, @PathVariable String login) {
+
+    }*/
+
 
 
 }
